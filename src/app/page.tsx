@@ -37,7 +37,7 @@ export default function Home() {
           }
         });
 
-        let processedSchools = Object.values(currentSchoolsData).sort((a: any, b: any) => b.points - a.points);
+        let processedSchools: any[] = Object.values(currentSchoolsData).sort((a: any, b: any) => b.points - a.points);
         
         processedSchools = processedSchools.map((school: any, index: number) => {
           const rank = index + 1;
@@ -61,7 +61,7 @@ export default function Home() {
           }
 
           if (index > 0) {
-            const pointDiff = processedSchools[index - 1].points - school.points;
+            const pointDiff = (processedSchools[index - 1] as any).points - school.points;
             margin = `-${pointDiff} pts to next`;
           } else {
             margin = "Leading";
