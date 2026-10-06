@@ -48,7 +48,16 @@ export default function Home() {
           // Filter points by category if selectedCategory is not "all"
           if (selectedCategory !== "all") {
             const eventInfo = eventsMap[data.eventId];
-            if (!eventInfo || eventInfo.cat !== selectedCategory) {
+            if (!eventInfo) return; // skip if event not found
+            
+            const evCat = String(eventInfo.cat).toLowerCase().replace(/\s+/g, '');
+            const selCat = String(selectedCategory).toLowerCase().replace(/\s+/g, '');
+            
+            const matches = evCat === selCat || 
+                            `category${evCat}` === selCat || 
+                            evCat === selCat.replace(/category/i, '');
+                            
+            if (!matches) {
               return; // skip points not in this category
             }
           }
