@@ -239,16 +239,16 @@ export default function AdminDashboard() {
   return (
     <div className="flex flex-col h-screen bg-background">
       <Header />
-      <main className="flex-1 overflow-auto pt-28 pb-8 px-gutter flex justify-center items-start">
-        <div className="w-full max-w-4xl bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container-high/60 p-8">
-          <h1 className="font-headline-md text-headline-md text-primary mb-6">Admin Control Panel</h1>
+      <main className="flex-1 overflow-auto pt-32 md:pt-40 pb-24 md:pb-12 px-4 md:px-8 flex justify-center items-start">
+        <div className="w-full max-w-4xl bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container-high/60 p-4 md:p-8">
+          <h1 className="text-2xl md:text-3xl font-headline-md text-primary mb-6">Admin Control Panel</h1>
           
-          <div className="flex flex-wrap gap-2 mb-8 border-b pb-4">
+          <div className="flex flex-wrap gap-2 mb-8 border-b pb-4 overflow-x-auto scrollbar-hide">
             {["points", "schools", "categories", "events"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as any)}
-                className={`px-6 py-2 rounded-full font-label-lg font-bold capitalize transition-colors ${
+                className={`px-4 py-2 md:px-6 rounded-full text-sm md:text-base font-bold capitalize transition-colors whitespace-nowrap ${
                   activeTab === tab 
                     ? "bg-primary text-on-primary" 
                     : "bg-surface-container hover:bg-surface-container-high text-on-surface"
@@ -331,7 +331,7 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === "schools" && (
-            <div className="grid md:grid-cols-2 gap-12">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12">
               <div className="flex flex-col gap-8">
                 <form onSubmit={handleAddSchool} className="flex flex-col gap-6">
                   <h2 className="text-title-lg font-bold">Add New School</h2>
@@ -361,7 +361,7 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === "categories" && (
-            <div className="grid md:grid-cols-2 gap-12">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12">
               <form onSubmit={handleAddCategory} className="flex flex-col gap-6">
                 <h2 className="text-title-lg font-bold">Add New Category</h2>
                 <div className="flex flex-col gap-2">
@@ -380,7 +380,7 @@ export default function AdminDashboard() {
           )}
 
           {activeTab === "events" && (
-            <div className="grid md:grid-cols-2 gap-12">
+            <div className="grid md:grid-cols-2 gap-8 md:gap-12">
               <div className="flex flex-col gap-8">
                 <form onSubmit={handleAddEvent} className="flex flex-col gap-6">
                   <h2 className="text-title-lg font-bold">Add New Event</h2>

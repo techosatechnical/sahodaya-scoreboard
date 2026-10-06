@@ -20,7 +20,10 @@ export default function ScoreboardTable({
   searchQuery,
   setSearchQuery,
   filterType,
-  setFilterType
+  setFilterType,
+  categories,
+  selectedCategory,
+  setSelectedCategory
 }: {
   filteredSchools: School[];
   totalSchoolsCount: number;
@@ -28,6 +31,9 @@ export default function ScoreboardTable({
   setSearchQuery: (q: string) => void;
   filterType: string;
   setFilterType: (f: string) => void;
+  categories: any[];
+  selectedCategory: string;
+  setSelectedCategory: (c: string) => void;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isUserInteracting = useRef(false);
@@ -79,7 +85,24 @@ export default function ScoreboardTable({
   }, [filteredSchools]);
 
   return (
-    <section className="w-full px-4 sm:px-6 lg:px-8 pb-8 flex flex-col flex-1 min-h-0">
+    <section className="w-full px-4 sm:px-6 lg:px-8 pb-8 flex flex-col flex-1 min-h-0 gap-2">
+      <div className="w-full flex justify-end -mt-4 mb-1 relative z-20 md:hidden">
+        <div className="relative w-full sm:w-48">
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="w-full bg-surface-container-high hover:bg-surface-container-highest focus:bg-surface-container-highest transition-colors rounded-lg px-3 py-1.5 pr-8 outline-none text-on-surface font-semibold text-xs sm:text-sm border border-transparent focus:border-primary shadow-sm appearance-none cursor-pointer"
+          >
+            <option value="all">All Categories</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.name}>{c.name}</option>
+            ))}
+          </select>
+          <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[16px]">
+            expand_more
+          </span>
+        </div>
+      </div>
       <div className="w-full h-full flex flex-col rounded-2xl bg-surface-container-lowest shadow-sm border border-surface-container-high/60 overflow-hidden">
         <div 
           ref={scrollRef} 
@@ -206,7 +229,7 @@ export default function ScoreboardTable({
       </div>
       <div className="mt-4 flex items-center justify-center w-full">
         <span className="font-label-sm text-label-sm text-on-surface-variant font-medium tracking-wide">
-          Powered by <span className="font-bold text-blue-800">Techosa</span>
+          Powered by <a href="https://robolabs.techosa.in/" target="_blank" rel="noopener noreferrer" className="font-bold text-blue-800 hover:underline">Techosa Robotics</a>
         </span>
       </div>
     </section>

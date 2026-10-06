@@ -14,24 +14,45 @@ export default function Home() {
   const [schools, setSchools] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [categories, setCategories] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
   useEffect(() => {
-    // Setup real-time listeners for both collections
+    // We need events to map point's eventId to category
+    let eventsMap: Record<string, any> = {};
+    const unsubEvents = onSnapshot(collection(db, "events"), (eventsSnap) => {
+      const newEventsMap: Record<string, any> = {};
+      eventsSnap.forEach((doc) => {
+        newEventsMap[doc.id] = { id: doc.id, ...doc.data() };
+      });
+      eventsMap = newEventsMap;
+    });
+
+    const unsubCategories = onSnapshot(collection(db, "categories"), (catSnap) => {
+      const cats: any[] = [];
+      catSnap.forEach((doc) => cats.push({ id: doc.id, ...doc.data() }));
+      setCategories(cats);
+    });
+
     const unsubSchools = onSnapshot(collection(db, "schools"), (schoolsSnap) => {
       const schoolsData: Record<string, any> = {};
       schoolsSnap.forEach((doc) => {
         schoolsData[doc.id] = { id: doc.id, name: doc.data().name, points: 0, zone: doc.data().zone || "Unspecified Zone" };
       });
 
-      // Now we have the latest schools, we also need the latest points
-      // We can use a nested snapshot or a separate state, but a simpler way is just to fetch points here,
-      // OR better yet, attach listeners to both and combine them in state.
-      
       const unsubPoints = onSnapshot(collection(db, "points"), (pointsSnap) => {
-        // Deep clone schoolsData to reset points
         const currentSchoolsData = JSON.parse(JSON.stringify(schoolsData));
         
         pointsSnap.forEach((doc) => {
           const data = doc.data();
+          // Filter points by category if selectedCategory is not "all"
+          if (selectedCategory !== "all") {
+            const eventInfo = eventsMap[data.eventId];
+            if (!eventInfo || eventInfo.cat !== selectedCategory) {
+              return; // skip points not in this category
+            }
+          }
+          
           if (data.schoolId && currentSchoolsData[data.schoolId]) {
             currentSchoolsData[data.schoolId].points += (data.points || 0);
           }
@@ -46,24 +67,24 @@ export default function Home() {
           let icon = "local_library";
           let margin = "";
 
-          if (rank === 1) {
+          if (rank === 1 && school.points > 0) {
             theme = "amber";
             medal = "Champion Leader";
             icon = "emoji_events";
-          } else if (rank === 2) {
+          } else if (rank === 2 && school.points > 0) {
             theme = "slate";
             medal = "2nd Place";
             icon = "military_tech";
-          } else if (rank === 3) {
+          } else if (rank === 3 && school.points > 0) {
             theme = "orange";
             medal = "3rd Place";
             icon = "workspace_premium";
           }
 
-          if (index > 0) {
+          if (index > 0 && school.points > 0) {
             const pointDiff = (processedSchools[index - 1] as any).points - school.points;
             margin = `-${pointDiff} pts to next`;
-          } else {
+          } else if (school.points > 0) {
             margin = "Leading";
           }
 
@@ -77,8 +98,12 @@ export default function Home() {
       return () => unsubPoints();
     }, (error) => console.error("Error listening to schools:", error));
 
-    return () => unsubSchools();
-  }, []);
+    return () => {
+      unsubSchools();
+      unsubEvents();
+      unsubCategories();
+    };
+  }, [selectedCategory]);
 
   const filteredSchools = schools.filter((school, index) => {
     const matchesSearch =
@@ -104,7 +129,13 @@ export default function Home() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
-      <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <Header 
+        searchQuery={searchQuery} 
+        setSearchQuery={setSearchQuery}
+        categories={categories}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
       <main className="flex-1 w-full pt-28 md:pt-32 pb-16 md:pb-0 overflow-hidden flex flex-col">
         <div className="relative flex flex-col flex-1 w-full overflow-hidden">
           <Hero />
@@ -115,6 +146,9 @@ export default function Home() {
             setSearchQuery={setSearchQuery}
             filterType={filterType}
             setFilterType={setFilterType}
+            categories={categories}
+            selectedCategory={selectedCategory}
+            setSelectedCategory={setSelectedCategory}
           />
         </div>
       </main>
