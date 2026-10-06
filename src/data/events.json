@@ -1,0 +1,758 @@
+[
+  {
+    "id": 1,
+    "day": "8th October 2026",
+    "cat": 1,
+    "item": "HINDI RECITATION",
+    "stageNo": "VII",
+    "venue": "ROOM 101 (11 B)",
+    "stageName": "GEETAM"
+  },
+  {
+    "id": 2,
+    "day": "8th October 2026",
+    "cat": 1,
+    "item": "ENGLISH RECITATION",
+    "stageNo": "XIV",
+    "venue": "ROOM 212 (7 B2)",
+    "stageName": "LAYAM"
+  },
+  {
+    "id": 3,
+    "day": "8th October 2026",
+    "cat": 1,
+    "item": "MALAYALAM RECITATION",
+    "stageNo": "XV",
+    "venue": "ROOM 215( 7 A2)",
+    "stageName": "BHARATHAM"
+  },
+  {
+    "id": 4,
+    "day": "8th October 2026",
+    "cat": 2,
+    "item": "BHARATHANATYAM (B)",
+    "stageNo": "I",
+    "venue": "BB COURT",
+    "stageName": "SUGEETHAM"
+  },
+  {
+    "id": 5,
+    "day": "8th October 2026",
+    "cat": 2,
+    "item": "BHARATHANATYAM (G)",
+    "stageNo": "II",
+    "venue": "AV HALL",
+    "stageName": "TARANGAM"
+  },
+  {
+    "id": 6,
+    "day": "8th October 2026",
+    "cat": 2,
+    "item": "GROUP DANCE",
+    "stageNo": "IV",
+    "venue": "TENNIS COURT",
+    "stageName": "VRINDAVANI"
+  },
+  {
+    "id": 7,
+    "day": "8th October 2026",
+    "cat": 2,
+    "item": "CLASSICAL MUSIC ( CARNATIC)",
+    "stageNo": "III",
+    "venue": "CHINARTS",
+    "stageName": "NADAM"
+  },
+  {
+    "id": 8,
+    "day": "8th October 2026",
+    "cat": 2,
+    "item": "MALAYALAM RECITATION",
+    "stageNo": "IX",
+    "venue": "ROOM 201 (8 A4)",
+    "stageName": "TAALAM"
+  },
+  {
+    "id": 9,
+    "day": "8th October 2026",
+    "cat": 2,
+    "item": "MONOACT",
+    "stageNo": "V",
+    "venue": "JY ASSEMBLY HALL",
+    "stageName": "DWANI"
+  },
+  {
+    "id": 10,
+    "day": "8th October 2026",
+    "cat": 2,
+    "item": "ENGLISH RECITATION",
+    "stageNo": "VI",
+    "venue": "ANNAKSHETHRA",
+    "stageName": "SARGAM"
+  },
+  {
+    "id": 11,
+    "day": "8th October 2026",
+    "cat": 2,
+    "item": "SANSKRIT RECITATION",
+    "stageNo": "X",
+    "venue": "ROOM 204 (8 A1)",
+    "stageName": "BHAIRAVI"
+  },
+  {
+    "id": 12,
+    "day": "8th October 2026",
+    "cat": 2,
+    "item": "LIGHT MUSIC (G)",
+    "stageNo": "XII",
+    "venue": "ROOM 207 (9 A1)",
+    "stageName": "MOHANAM"
+  },
+  {
+    "id": 13,
+    "day": "8th October 2026",
+    "cat": 2,
+    "item": "HINDI RECITATION",
+    "stageNo": "XVI",
+    "venue": "ROOM 316 (YOGA HALL) (B)",
+    "stageName": "NAGADWANI"
+  },
+  {
+    "id": 14,
+    "day": "8th October 2026",
+    "cat": 3,
+    "item": "BHARATHANATYAM (G)",
+    "stageNo": "I",
+    "venue": "BB COURT",
+    "stageName": "SUGEETHAM"
+  },
+  {
+    "id": 15,
+    "day": "8th October 2026",
+    "cat": 3,
+    "item": "BHARATHANATYAM (B)",
+    "stageNo": "II",
+    "venue": "AV HALL",
+    "stageName": "TARANGAM"
+  },
+  {
+    "id": 16,
+    "day": "8th October 2026",
+    "cat": 3,
+    "item": "GROUP DANCE",
+    "stageNo": "IV",
+    "venue": "TENNIS COURT",
+    "stageName": "VRINDAVANI"
+  },
+  {
+    "id": 17,
+    "day": "8th October 2026",
+    "cat": 3,
+    "item": "CLASSICAL MUSIC(G)",
+    "stageNo": "III",
+    "venue": "CHINARTS",
+    "stageName": "NADAM"
+  },
+  {
+    "id": 18,
+    "day": "8th October 2026",
+    "cat": 3,
+    "item": "MIMICRY",
+    "stageNo": "V",
+    "venue": "JY ASSEMBLY HALL",
+    "stageName": "DWANI"
+  },
+  {
+    "id": 19,
+    "day": "8th October 2026",
+    "cat": 3,
+    "item": "ANCHORING",
+    "stageNo": "VIII",
+    "venue": "ROOM 104 (11 D)",
+    "stageName": "SWARAM"
+  },
+  {
+    "id": 20,
+    "day": "8th October 2026",
+    "cat": 3,
+    "item": "SANSKRIT RECITATION",
+    "stageNo": "X",
+    "venue": "ROOM 204 (8 A1)",
+    "stageName": "BHAIRAVI"
+  },
+  {
+    "id": 21,
+    "day": "8th October 2026",
+    "cat": 3,
+    "item": "ARABIC RECITATION",
+    "stageNo": "XI",
+    "venue": "ROOM 205",
+    "stageName": "MEGHMALHAR"
+  },
+  {
+    "id": 22,
+    "day": "8th October 2026",
+    "cat": 3,
+    "item": "MAPPILAPPATTU (G)",
+    "stageNo": "XIII",
+    "venue": "ROOM 210 (9 B1)",
+    "stageName": "RATNANGI"
+  },
+  {
+    "id": 23,
+    "day": "8th October 2026",
+    "cat": 3,
+    "item": "TABALA(EASTERN)",
+    "stageNo": "XVII",
+    "venue": "ROOM 317 (YOGA HALL) (G)",
+    "stageName": "ALANKARAM"
+  },
+  {
+    "id": 24,
+    "day": "8th October 2026",
+    "cat": 3,
+    "item": "VIOLIN(EASTERN)",
+    "stageNo": "XVII",
+    "venue": "ROOM 317 (YOGA HALL) (G)",
+    "stageName": "ALANKARAM"
+  },
+  {
+    "id": 25,
+    "day": "8th October 2026",
+    "cat": 4,
+    "item": "MOHINIYATTAM",
+    "stageNo": "I",
+    "venue": "BB COURT",
+    "stageName": "SUGEETHAM"
+  },
+  {
+    "id": 26,
+    "day": "8th October 2026",
+    "cat": 4,
+    "item": "MONOACT",
+    "stageNo": "V",
+    "venue": "JY ASSEMBLY HALL",
+    "stageName": "DWANI"
+  },
+  {
+    "id": 27,
+    "day": "8th October 2026",
+    "cat": 4,
+    "item": "HINDI RECITATION",
+    "stageNo": "VII",
+    "venue": "ROOM 101 (11 B)",
+    "stageName": "GEETAM"
+  },
+  {
+    "id": 28,
+    "day": "8th October 2026",
+    "cat": 4,
+    "item": "SANSKRIT RECITATION",
+    "stageNo": "X",
+    "venue": "ROOM 204 (8 A1)",
+    "stageName": "BHAIRAVI"
+  },
+  {
+    "id": 29,
+    "day": "8th October 2026",
+    "cat": 4,
+    "item": "ARABIC RECITATION",
+    "stageNo": "XI",
+    "venue": "ROOM 205",
+    "stageName": "MEGHMALHAR"
+  },
+  {
+    "id": 30,
+    "day": "8th October 2026",
+    "cat": 4,
+    "item": "MAPPILAPPATTU (G)",
+    "stageNo": "XIII",
+    "venue": "ROOM 210 (9 B1)",
+    "stageName": "RATNANGI"
+  },
+  {
+    "id": 31,
+    "day": "8th October 2026",
+    "cat": 4,
+    "item": "VIOLIN(EASTERN)",
+    "stageNo": "XVII",
+    "venue": "ROOM 317 (YOGA HALL) (G)",
+    "stageName": "ALANKARAM"
+  },
+  {
+    "id": 32,
+    "day": "8th October 2026",
+    "cat": 5,
+    "item": "THIRUVATHIRA KALI",
+    "stageNo": "IV",
+    "venue": "TENNIS COURT",
+    "stageName": "VRINDAVANI"
+  },
+  {
+    "id": 33,
+    "day": "8th October 2026",
+    "cat": 5,
+    "item": "MARGAM KALI",
+    "stageNo": "IV",
+    "venue": "TENNIS COURT",
+    "stageName": "VRINDAVANI"
+  },
+  {
+    "id": 34,
+    "day": "9th October 2026",
+    "cat": 1,
+    "item": "FOLK DANCE (COMMON)",
+    "stageNo": "II",
+    "venue": "AV HALL",
+    "stageName": "TARANGAM"
+  },
+  {
+    "id": 35,
+    "day": "9th October 2026",
+    "cat": 1,
+    "item": "ENGLISH ELOCUTION",
+    "stageNo": "VIII",
+    "venue": "ROOM 104 (11 D)",
+    "stageName": "SWARAM"
+  },
+  {
+    "id": 36,
+    "day": "9th October 2026",
+    "cat": 1,
+    "item": "MALAYALAM ELOCUTION",
+    "stageNo": "XIII",
+    "venue": "ROOM 210 (9 B1)",
+    "stageName": "RATNANGI"
+  },
+  {
+    "id": 37,
+    "day": "9th October 2026",
+    "cat": 2,
+    "item": "MOHINIYATTAM",
+    "stageNo": "I",
+    "venue": "BB COURT",
+    "stageName": "SUGEETHAM"
+  },
+  {
+    "id": 38,
+    "day": "9th October 2026",
+    "cat": 2,
+    "item": "FOLK DANCE(B)",
+    "stageNo": "II",
+    "venue": "AV HALL",
+    "stageName": "TARANGAM"
+  },
+  {
+    "id": 39,
+    "day": "9th October 2026",
+    "cat": 2,
+    "item": "HINDI ELOCUTION",
+    "stageNo": "IX",
+    "venue": "ROOM 201 (8 A4)",
+    "stageName": "TAALAM"
+  },
+  {
+    "id": 40,
+    "day": "9th October 2026",
+    "cat": 2,
+    "item": "ENGLISH ELOCUTION",
+    "stageNo": "VII",
+    "venue": "ROOM 101 (11 B)",
+    "stageName": "GEETAM"
+  },
+  {
+    "id": 41,
+    "day": "9th October 2026",
+    "cat": 2,
+    "item": "MALAYALAM ELOCUTION",
+    "stageNo": "XII",
+    "venue": "ROOM 207 (9 A1)",
+    "stageName": "MOHANAM"
+  },
+  {
+    "id": 42,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "FOLK DANCE (B)",
+    "stageNo": "II",
+    "venue": "AV HALL",
+    "stageName": "TARANGAM"
+  },
+  {
+    "id": 43,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "MOHINIYATTAM",
+    "stageNo": "IV",
+    "venue": "TENNIS COURT",
+    "stageName": "VRINDAVANI"
+  },
+  {
+    "id": 44,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "KUCHIPUDI(G)",
+    "stageNo": "IV",
+    "venue": "TENNIS COURT",
+    "stageName": "VRINDAVANI"
+  },
+  {
+    "id": 45,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "MONOACT",
+    "stageNo": "V",
+    "venue": "JY ASSEMBLY HALL",
+    "stageName": "DWANI"
+  },
+  {
+    "id": 46,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "HINDI EXTEMPORE",
+    "stageNo": "VI",
+    "venue": "ANNAKSHETHRA",
+    "stageName": "SARGAM"
+  },
+  {
+    "id": 47,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "ENGLISH EXTEMPORE",
+    "stageNo": "X",
+    "venue": "ROOM 204 (8 A1)",
+    "stageName": "BHAIRAVI"
+  },
+  {
+    "id": 48,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "MALAYALAM EXTEMPORE",
+    "stageNo": "XI",
+    "venue": "ROOM 205",
+    "stageName": "MEGHMALHAR"
+  },
+  {
+    "id": 49,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "MALAYALAM RECITATION",
+    "stageNo": "XIV",
+    "venue": "ROOM 212 (7 B2)",
+    "stageName": "LAYAM"
+  },
+  {
+    "id": 50,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "ENGLISH RECITATION",
+    "stageNo": "XV",
+    "venue": "ROOM 215( 7 A2)",
+    "stageName": "BHARATHAM"
+  },
+  {
+    "id": 51,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "CLASSICAL MUSIC (B)",
+    "stageNo": "XVI",
+    "venue": "ROOM 316 (YOGA HALL) (B)",
+    "stageName": "NAGADWANI"
+  },
+  {
+    "id": 52,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "LIGHT MUSIC(B)",
+    "stageNo": "XVII",
+    "venue": "ROOM 317 (YOGA HALL) (G)",
+    "stageName": "ALANKARAM"
+  },
+  {
+    "id": 53,
+    "day": "9th October 2026",
+    "cat": 3,
+    "item": "LIGHT MUSIC(G)",
+    "stageNo": "XVII",
+    "venue": "ROOM 317 (YOGA HALL) (G)",
+    "stageName": "ALANKARAM"
+  },
+  {
+    "id": 54,
+    "day": "9th October 2026",
+    "cat": 4,
+    "item": "BHARATHANATYAM (G)",
+    "stageNo": "I",
+    "venue": "BB COURT",
+    "stageName": "SUGEETHAM"
+  },
+  {
+    "id": 55,
+    "day": "9th October 2026",
+    "cat": 4,
+    "item": "KUCHIPPUDI(G)",
+    "stageNo": "I",
+    "venue": "BB COURT",
+    "stageName": "SUGEETHAM"
+  },
+  {
+    "id": 56,
+    "day": "9th October 2026",
+    "cat": 4,
+    "item": "MIMICRY",
+    "stageNo": "V",
+    "venue": "JY ASSEMBLY HALL",
+    "stageName": "DWANI"
+  },
+  {
+    "id": 57,
+    "day": "9th October 2026",
+    "cat": 4,
+    "item": "HINDI EXTEMPORE",
+    "stageNo": "VI",
+    "venue": "ANNAKSHETHRA",
+    "stageName": "SARGAM"
+  },
+  {
+    "id": 58,
+    "day": "9th October 2026",
+    "cat": 4,
+    "item": "ENGLISH EXTEMPORE",
+    "stageNo": "X",
+    "venue": "ROOM 204 (8 A1)",
+    "stageName": "BHAIRAVI"
+  },
+  {
+    "id": 59,
+    "day": "9th October 2026",
+    "cat": 4,
+    "item": "MALAYALAM EXTEMPORE",
+    "stageNo": "XI",
+    "venue": "ROOM 205",
+    "stageName": "MEGHMALHAR"
+  },
+  {
+    "id": 60,
+    "day": "9th October 2026",
+    "cat": 4,
+    "item": "CLASSICAL MUSIC ( CARNATIC) (B)",
+    "stageNo": "XVI",
+    "venue": "ROOM 316 (YOGA HALL) (B)",
+    "stageName": "NAGADWANI"
+  },
+  {
+    "id": 61,
+    "day": "9th October 2026",
+    "cat": 4,
+    "item": "CLASSICAL MUSIC ( CARNATIC) (G)",
+    "stageNo": "XVI",
+    "venue": "ROOM 316 (YOGA HALL) (B)",
+    "stageName": "NAGADWANI"
+  },
+  {
+    "id": 62,
+    "day": "9th October 2026",
+    "cat": 4,
+    "item": "LIGHT MUSIC(G)",
+    "stageNo": "XVI",
+    "venue": "ROOM 316 (YOGA HALL) (B)",
+    "stageName": "NAGADWANI"
+  },
+  {
+    "id": 63,
+    "day": "9th October 2026",
+    "cat": 5,
+    "item": "PATRIOTIC SONG",
+    "stageNo": "III",
+    "venue": "CHINARTS",
+    "stageName": "NADAM"
+  },
+  {
+    "id": 64,
+    "day": "9th October 2026",
+    "cat": 5,
+    "item": "GROUP SONG",
+    "stageNo": "III",
+    "venue": "CHINARTS",
+    "stageName": "NADAM"
+  },
+  {
+    "id": 65,
+    "day": "9th October 2026",
+    "cat": 5,
+    "item": "MIME",
+    "stageNo": "V",
+    "venue": "JY ASSEMBLY HALL",
+    "stageName": "DWANI"
+  },
+  {
+    "id": 66,
+    "day": "10th October 2026",
+    "cat": 5,
+    "item": "OPPANA",
+    "stageNo": "I",
+    "venue": "BB COURT",
+    "stageName": "SUGEETHAM"
+  },
+  {
+    "id": 67,
+    "day": "10th October 2026",
+    "cat": 5,
+    "item": "DUFFMUTT",
+    "stageNo": "I",
+    "venue": "BB COURT",
+    "stageName": "SUGEETHAM"
+  },
+  {
+    "id": 68,
+    "day": "10th October 2026",
+    "cat": 2,
+    "item": "FOLK DANCE(G)",
+    "stageNo": "II",
+    "venue": "AV HALL",
+    "stageName": "TARANGAM"
+  },
+  {
+    "id": 69,
+    "day": "10th October 2026",
+    "cat": 5,
+    "item": "WESTERN MUSIC CONCERT",
+    "stageNo": "IV",
+    "venue": "TENNIS COURT",
+    "stageName": "VRINDAVANI"
+  },
+  {
+    "id": 70,
+    "day": "10th October 2026",
+    "cat": 3,
+    "item": "GUITAR(WESTERN)",
+    "stageNo": "IV",
+    "venue": "TENNIS COURT",
+    "stageName": "VRINDAVANI"
+  },
+  {
+    "id": 71,
+    "day": "10th October 2026",
+    "cat": 4,
+    "item": "GUITAR(WESTERN)",
+    "stageNo": "IV",
+    "venue": "TENNIS COURT",
+    "stageName": "VRINDAVANI"
+  },
+  {
+    "id": 72,
+    "day": "10th October 2026",
+    "cat": 5,
+    "item": "ENGLISH ONE ACT PLAY",
+    "stageNo": "III",
+    "venue": "CHINTECH ATRIUM",
+    "stageName": "RAGAM"
+  },
+  {
+    "id": 73,
+    "day": "10th October 2026",
+    "cat": 3,
+    "item": "FOLK DANCE (G)",
+    "stageNo": "V",
+    "venue": "JY ASSEMBLY HALL",
+    "stageName": "DWANI"
+  },
+  {
+    "id": 74,
+    "day": "10th October 2026",
+    "cat": 4,
+    "item": "FOLK DANCE (G)",
+    "stageNo": "V",
+    "venue": "JY ASSEMBLY HALL",
+    "stageName": "DWANI"
+  },
+  {
+    "id": 75,
+    "day": "10th October 2026",
+    "cat": 3,
+    "item": "HINDI RECITATION",
+    "stageNo": "IX",
+    "venue": "ROOM 201 (8 A4)",
+    "stageName": "TAALAM"
+  },
+  {
+    "id": 76,
+    "day": "10th October 2026",
+    "cat": 2,
+    "item": "ARABIC RECITATION",
+    "stageNo": "X",
+    "venue": "ROOM 204 (8 A1)",
+    "stageName": "BHAIRAVI"
+  },
+  {
+    "id": 77,
+    "day": "10th October 2026",
+    "cat": 1,
+    "item": "LIGHT MUSIC (COMMON)",
+    "stageNo": "XII",
+    "venue": "ROOM 207 (9 A1)",
+    "stageName": "MOHANAM"
+  },
+  {
+    "id": 78,
+    "day": "10th October 2026",
+    "cat": 4,
+    "item": "LIGHT MUSIC(B)",
+    "stageNo": "XII",
+    "venue": "ROOM 207 (9 A1)",
+    "stageName": "MOHANAM"
+  },
+  {
+    "id": 79,
+    "day": "10th October 2026",
+    "cat": 2,
+    "item": "LIGHT MUSIC (B)",
+    "stageNo": "XI",
+    "venue": "ROOM 205",
+    "stageName": "MEGHMALHAR"
+  },
+  {
+    "id": 80,
+    "day": "10th October 2026",
+    "cat": 4,
+    "item": "ANCHORING",
+    "stageNo": "XIII",
+    "venue": "ROOM 210 (9 B1)",
+    "stageName": "RATNANGI"
+  },
+  {
+    "id": 81,
+    "day": "10th October 2026",
+    "cat": 4,
+    "item": "ENGLISH RECITATION",
+    "stageNo": "XIII",
+    "venue": "ROOM 210 (9 B1)",
+    "stageName": "RATNANGI"
+  },
+  {
+    "id": 82,
+    "day": "10th October 2026",
+    "cat": 4,
+    "item": "MALAYALAM RECITATION",
+    "stageNo": "XIV",
+    "venue": "ROOM 212 (7 B2)",
+    "stageName": "LAYAM"
+  },
+  {
+    "id": 83,
+    "day": "10th October 2026",
+    "cat": 4,
+    "item": "MAPPILAPPATTU (B)",
+    "stageNo": "XVI",
+    "venue": "ROOM 316 (YOGA HALL) (B)",
+    "stageName": "NAGADWANI"
+  },
+  {
+    "id": 84,
+    "day": "10th October 2026",
+    "cat": 3,
+    "item": "MAPPILAPPATTU (B)",
+    "stageNo": "XVI",
+    "venue": "ROOM 316 (YOGA HALL) (B)",
+    "stageName": "NAGADWANI"
+  }
+]
