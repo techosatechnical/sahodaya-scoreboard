@@ -105,7 +105,7 @@ export default function Home() {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-background">
       <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <main className="flex-1 w-full pt-20 overflow-hidden flex flex-col">
+      <main className="flex-1 w-full pt-28 md:pt-32 pb-16 md:pb-0 overflow-hidden flex flex-col">
         <div className="relative flex flex-col flex-1 w-full overflow-hidden">
           <Hero />
           <ScoreboardTable 

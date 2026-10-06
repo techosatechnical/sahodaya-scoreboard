@@ -10,6 +10,7 @@ export default function SchoolsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isUserInteracting = useRef(false);
 
   useEffect(() => {
     const fetchSchools = async () => {
@@ -54,7 +55,8 @@ export default function SchoolsPage() {
     const autoScroll = () => {
       if (!scrollContainer) return;
       
-      if (!isPaused) {
+      // If the user is hovering/touching, don't auto-scroll, just loop
+      if (!isPaused && !isUserInteracting.current) {
         scrollContainer.scrollTop += 1;
         
         // Check if we hit the bottom
@@ -95,42 +97,59 @@ export default function SchoolsPage() {
     <div className="flex flex-col min-h-screen bg-background">
       <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       
-      <main className="flex-1 w-full pt-28 pb-12 px-4 md:px-8 mx-auto flex flex-col">
+      <main className="flex-1 w-full pt-32 md:pt-40 pb-24 md:pb-12 px-4 md:px-8 mx-auto flex flex-col">
         <div className="mb-8 flex justify-center">
           <h1 className="text-3xl md:text-4xl text-primary font-extrabold tracking-tight text-center">Participating Schools</h1>
         </div>
 
         {loading ? (
-          <div className="flex items-center justify-center py-20 text-on-surface-variant font-bold text-3xl">
+          <div className="flex items-center justify-center py-20 text-on-surface-variant font-bold text-xl sm:text-3xl">
             Loading schools...
           </div>
         ) : (
-          <div className="flex-1 bg-surface-container rounded-3xl overflow-hidden flex flex-col shadow-lg border border-surface-container-high max-h-[75vh]">
-            <div ref={scrollRef} className="overflow-x-auto overflow-y-auto flex-1 scrollbar-hide">
+          <div className="flex-1 bg-surface-container rounded-2xl sm:rounded-3xl overflow-hidden flex flex-col shadow-lg border border-surface-container-high max-h-[75vh]">
+            <div 
+              ref={scrollRef} 
+              className="overflow-x-auto overflow-y-auto flex-1 scrollbar-hide"
+              onMouseEnter={() => { isUserInteracting.current = true; }}
+              onMouseLeave={() => { isUserInteracting.current = false; }}
+              onTouchStart={() => { isUserInteracting.current = true; }}
+              onTouchEnd={() => { isUserInteracting.current = false; }}
+            >
               <table className="w-full text-left border-collapse">
                 <thead className="bg-surface-container-high sticky top-0 z-10">
-                  <tr>
-                    <th className="px-8 py-6 text-2xl font-bold text-on-surface w-24">#</th>
-                    <th className="px-8 py-6 text-2xl font-bold text-on-surface">School Name</th>
+                  <tr className="border-b border-surface-container text-on-surface-variant font-bold uppercase tracking-wider text-xs sm:text-sm 2xl:text-2xl h-10 sm:h-12 2xl:h-20">
+                    <th className="px-4 sm:px-8 py-2 sm:py-6 w-16 sm:w-24 2xl:w-40 text-center">#</th>
+                    <th className="px-4 sm:px-8 py-2 sm:py-6">School Name</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-surface-container-high bg-surface-container">
                   {filteredSchools.length > 0 ? (
                     filteredSchools.map((school, idx) => (
-                      <tr key={school.id || idx} className="hover:bg-surface-container-high/50 transition-colors">
-                        <td className="px-8 py-8 text-2xl font-medium text-on-surface-variant">{idx + 1}</td>
-                        <td className="px-8 py-8">
-                          <div className="flex items-center gap-6">
-                            <span className="material-symbols-outlined text-[40px] text-primary">school</span>
-                            <span className="text-3xl font-bold text-on-surface tracking-tight">{school.name}</span>
+                      <tr key={school.id || idx} className="hover:bg-surface-container-high/50 transition-colors group">
+                        <td className="px-4 sm:px-8 py-4 sm:py-8 2xl:py-12 text-center">
+                          <span className="text-base sm:text-2xl 2xl:text-4xl font-bold text-on-surface-variant group-hover:text-primary transition-colors">
+                            {idx + 1}
+                          </span>
+                        </td>
+                        <td className="px-4 sm:px-8 py-4 sm:py-8 2xl:py-12">
+                          <div className="flex items-center gap-3 sm:gap-6 2xl:gap-10">
+                            <div className="w-10 h-10 sm:w-16 sm:h-16 2xl:w-24 2xl:h-24 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0 group-hover:bg-primary-container transition-colors shadow-sm">
+                              <span className="material-symbols-outlined text-[20px] sm:text-[32px] 2xl:text-[48px] text-secondary group-hover:text-primary transition-colors">school</span>
+                            </div>
+                            <div className="flex flex-col justify-center">
+                              <span className="text-sm sm:text-3xl 2xl:text-5xl font-extrabold text-on-surface tracking-tight">{school.name}</span>
+                              <span className="text-xs sm:text-lg 2xl:text-3xl text-on-surface-variant font-medium mt-1">{school.zone}</span>
+                            </div>
                           </div>
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={2} className="px-8 py-16 text-center text-on-surface-variant text-2xl">
-                        No schools found matching your search.
+                      <td colSpan={2} className="px-8 py-16 text-center text-on-surface-variant text-lg sm:text-2xl">
+                        <span className="material-symbols-outlined text-[48px] opacity-50 mb-4">search_off</span>
+                        <p>No schools found matching your search.</p>
                       </td>
                     </tr>
                   )}

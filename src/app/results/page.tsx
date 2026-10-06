@@ -74,7 +74,7 @@ export default function ResultsPage() {
     <div className="flex flex-col min-h-screen bg-background">
       <Header searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       
-      <main className="flex-1 w-full pt-28 pb-12 px-4 md:px-8 max-w-5xl mx-auto flex flex-col">
+      <main className="flex-1 w-full pt-32 md:pt-40 pb-24 md:pb-12 px-4 md:px-8 max-w-5xl mx-auto flex flex-col">
         <div className="mb-12 text-center">
           <h1 className="text-5xl md:text-6xl text-primary font-extrabold tracking-tight">Event Results</h1>
           <p className="text-on-surface-variant mt-4 text-xl">Select a category and event to view the winners.</p>
