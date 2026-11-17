@@ -6,9 +6,21 @@ import { db } from "@/lib/firebase";
 import { collection, addDoc, getDocs, deleteDoc, doc, setDoc, getDoc } from "firebase/firestore";
 import eventsData from "@/data/events.json";
 
+// ==========================================
+// ADMIN CONFIGURATION
+// You can change this password to whatever you want
+// ==========================================
+const ADMIN_PASSWORD = "admin@rangolsav2026";
+
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"points" | "schools" | "events" | "categories">("points");
   
+  // Password Protection States
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [passwordInput, setPasswordInput] = useState<string>("");
+  const [authError, setAuthError] = useState<string>("");
+  const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
+
   const [schools, setSchools] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [events, setEvents] = useState<any[]>([]);
@@ -36,6 +48,38 @@ export default function AdminDashboard() {
   // Delete Event
   const [deleteEventId, setDeleteEventId] = useState("");
 
+  // Check session storage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (sessionStorage.getItem("admin_authenticated") === "true") {
+        setIsAuthenticated(true);
+      }
+      setCheckingAuth(false);
+    }
+  }, []);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passwordInput === ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      setAuthError("");
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem("admin_authenticated", "true");
+      }
+    } else {
+      setAuthError("Incorrect password. Please try again.");
+      setPasswordInput("");
+    }
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setPasswordInput("");
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem("admin_authenticated");
+    }
+  };
+
   const fetchData = async () => {
     try {
       const sSnap = await getDocs(collection(db, "schools"));
@@ -52,8 +96,10 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [isAuthenticated]);
 
   const showStatus = (msg: string) => {
     setStatus(msg);
@@ -282,12 +328,88 @@ export default function AdminDashboard() {
     reader.readAsText(file);
   };
 
+  if (checkingAuth) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background text-on-surface font-bold text-lg">
+        Checking access...
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background">
+        <Header hideNav={true} />
+        <main className="flex-1 flex items-center justify-center p-4 pt-32 pb-16">
+          <div className="w-full max-w-md bg-surface-container-lowest rounded-3xl shadow-xl border border-surface-container-high/60 p-8 flex flex-col items-center text-center">
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6">
+              <span className="material-symbols-outlined text-[36px]">lock</span>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-primary tracking-tight">Admin Authentication</h1>
+            <p className="text-on-surface-variant text-sm mt-2 mb-6">
+              Enter the admin password to access score updates and competition controls.
+            </p>
+
+            <form onSubmit={handleLogin} className="w-full flex flex-col gap-4">
+              <div className="flex flex-col gap-1 text-left">
+                <input
+                  type="password"
+                  placeholder="Enter Admin Password"
+                  className="h-12 px-4 rounded-xl bg-surface-container-low border border-surface-container-high text-on-surface focus:outline-none focus:border-primary font-medium"
+                  value={passwordInput}
+                  onChange={(e) => {
+                    setPasswordInput(e.target.value);
+                    setAuthError("");
+                  }}
+                  autoFocus
+                  required
+                />
+              </div>
+
+              {authError && (
+                <div className="text-sm font-semibold text-error text-left bg-error/10 px-3 py-2 rounded-lg">
+                  {authError}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                className="h-12 w-full bg-primary text-on-primary rounded-xl font-bold hover:opacity-90 transition-opacity mt-2 cursor-pointer"
+              >
+                Unlock Admin Panel
+              </button>
+            </form>
+
+            <div className="mt-8 pt-6 border-t border-surface-container-high/60 w-full">
+              <a
+                href="/"
+                className="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center gap-1"
+              >
+                ← Return to Public Scoreboard
+              </a>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-screen bg-background">
       <Header hideNav={true} />
       <main className="flex-1 overflow-auto pt-32 md:pt-40 pb-24 md:pb-12 px-4 md:px-8 flex justify-center items-start">
         <div className="w-full max-w-4xl bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container-high/60 p-4 md:p-8">
-          <h1 className="text-2xl md:text-3xl font-headline-md text-primary mb-6">Admin Control Panel</h1>
+          <div className="flex items-center justify-between mb-6">
+            <h1 className="text-2xl md:text-3xl font-headline-md text-primary">Admin Control Panel</h1>
+            <button
+              onClick={handleLogout}
+              className="px-3 py-1.5 rounded-lg text-xs font-bold text-error bg-error/10 hover:bg-error/20 transition-colors flex items-center gap-1.5 cursor-pointer"
+              title="Lock Admin Panel"
+            >
+              <span className="material-symbols-outlined text-[16px]">lock</span>
+              Lock Panel
+            </button>
+          </div>
           
           <div className="flex flex-wrap gap-2 mb-8 border-b pb-4 overflow-x-auto scrollbar-hide">
             {["points", "schools", "categories", "events"].map((tab) => (
