@@ -46,29 +46,42 @@ export default function ResultsPage() {
 
   // Get winners for the selected event
   const getWinnersForEvent = () => {
-    if (!selectedEvent) return [];
+    if (!selectedEvent) return { podium: [], aGrades: [], isGroup: false };
     
     // Filter points for this event
     const eventPoints = points.filter(p => p.eventId === selectedEvent);
-    
-    // Group by position
-    const winners = [];
-    
     const getSchool = (schoolId: string) => schools.find(s => s.id === schoolId) || { name: "Unknown School", zone: "" };
     
-    const firstPlace = eventPoints.find(p => p.position === "1st Place" || p.points === 5);
-    if (firstPlace) winners.push({ ...firstPlace, school: getSchool(firstPlace.schoolId), rank: 1, label: "1st Place", theme: "amber", icon: "emoji_events" });
+    const eventObj = events.find(e => e.id === selectedEvent);
+    const isGroup = eventObj?.eventType === "group" || /action\s*song|western\s*dance/i.test(eventObj?.item || "");
     
-    const secondPlace = eventPoints.find(p => p.position === "2nd Place" || p.points === 3);
-    if (secondPlace) winners.push({ ...secondPlace, school: getSchool(secondPlace.schoolId), rank: 2, label: "2nd Place", theme: "slate", icon: "military_tech" });
+    const firstPts = isGroup ? 10 : 5;
+    const secondPts = isGroup ? 7 : 3;
+    const thirdPts = isGroup ? 5 : 2;
+    const aGradePts = isGroup ? 3 : 1;
+
+    const firstPlace = eventPoints.find(p => p.position === "1st Place" || p.points === firstPts);
+    const secondPlace = eventPoints.find(p => p.position === "2nd Place" || p.points === secondPts);
+    const thirdPlace = eventPoints.find(p => p.position === "3rd Place" || p.points === thirdPts);
     
-    const thirdPlace = eventPoints.find(p => p.position === "3rd Place" || p.points === 1);
-    if (thirdPlace) winners.push({ ...thirdPlace, school: getSchool(thirdPlace.schoolId), rank: 3, label: "3rd Place", theme: "orange", icon: "workspace_premium" });
-    
-    return winners;
+    const podium = [];
+    if (firstPlace) podium.push({ ...firstPlace, school: getSchool(firstPlace.schoolId), rank: 1, label: "1st Prize", theme: "amber", icon: "emoji_events", pts: firstPlace.points || firstPts });
+    if (secondPlace) podium.push({ ...secondPlace, school: getSchool(secondPlace.schoolId), rank: 2, label: "2nd Prize", theme: "slate", icon: "military_tech", pts: secondPlace.points || secondPts });
+    if (thirdPlace) podium.push({ ...thirdPlace, school: getSchool(thirdPlace.schoolId), rank: 3, label: "3rd Prize", theme: "orange", icon: "workspace_premium", pts: thirdPlace.points || thirdPts });
+
+    const aGrades = eventPoints
+      .filter(p => p.position === "A Grade" || (p.points === aGradePts && p.id !== firstPlace?.id && p.id !== secondPlace?.id && p.id !== thirdPlace?.id))
+      .map(p => ({
+        ...p,
+        school: getSchool(p.schoolId),
+        label: "A Grade",
+        pts: p.points || aGradePts
+      }));
+
+    return { podium, aGrades, isGroup };
   };
 
-  const winners = getWinnersForEvent();
+  const { podium, aGrades, isGroup } = getWinnersForEvent();
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -125,23 +138,81 @@ export default function ResultsPage() {
 
             {/* Results Podium */}
             {selectedEvent ? (
-              <div className="bg-surface-container rounded-3xl p-8 shadow-lg border border-surface-container-high mt-8">
-                {winners.length > 0 ? (
-                  <div className="flex flex-col gap-6">
-                    {winners.map((winner) => (
-                      <div key={winner.id} className="flex items-center gap-6 p-6 rounded-2xl bg-surface-container-lowest border border-surface-container-high">
-                        <div className={`w-20 h-20 flex-shrink-0 flex items-center justify-center rounded-full text-white ${winner.theme === 'amber' ? 'bg-amber-500' : winner.theme === 'slate' ? 'bg-slate-500' : 'bg-orange-500'}`}>
-                          <span className="material-symbols-outlined text-[40px]">{winner.icon}</span>
-                        </div>
-                        <div className="flex-1">
-                          <h3 className={`text-2xl font-extrabold ${winner.theme === 'amber' ? 'text-amber-500' : winner.theme === 'slate' ? 'text-slate-500' : 'text-orange-500'}`}>
-                            {winner.label}
-                          </h3>
-                          <h2 className="text-3xl font-bold text-on-surface mt-1">{winner.school.name}</h2>
-                          <p className="text-on-surface-variant mt-1 text-lg">{winner.school.zone}</p>
+              <div className="bg-surface-container rounded-3xl p-6 md:p-8 shadow-lg border border-surface-container-high mt-8 flex flex-col gap-6">
+                {/* Event Type Header Banner */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-surface-container-high/60">
+                  <div className="flex items-center gap-3">
+                    <span className="font-bold text-xl md:text-2xl text-on-surface">
+                      {events.find(e => e.id === selectedEvent)?.item}
+                    </span>
+                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${isGroup ? "bg-primary text-on-primary" : "bg-surface-container-high text-on-surface"}`}>
+                      {isGroup ? "Group Event" : "Single Event"}
+                    </span>
+                  </div>
+                  <span className="text-xs sm:text-sm font-mono text-on-surface-variant font-semibold">
+                    {isGroup ? "1st: 10 pts • 2nd: 7 pts • 3rd: 5 pts • A Grade: 3 pts" : "1st: 5 pts • 2nd: 3 pts • 3rd: 2 pts • A Grade: 1 pt"}
+                  </span>
+                </div>
+
+                {podium.length > 0 || aGrades.length > 0 ? (
+                  <div className="flex flex-col gap-8">
+                    {/* Podium (1st, 2nd, 3rd) */}
+                    {podium.length > 0 && (
+                      <div className="flex flex-col gap-4">
+                        <h4 className="text-sm font-bold uppercase tracking-wider text-on-surface-variant">Prize Winners</h4>
+                        <div className="flex flex-col gap-4">
+                          {podium.map((winner) => (
+                            <div key={winner.id} className="flex items-center gap-4 sm:gap-6 p-5 sm:p-6 rounded-2xl bg-surface-container-lowest border border-surface-container-high">
+                              <div className={`w-14 h-14 sm:w-16 sm:h-16 flex-shrink-0 flex items-center justify-center rounded-2xl text-white ${winner.theme === 'amber' ? 'bg-amber-500' : winner.theme === 'slate' ? 'bg-slate-500' : 'bg-orange-500'}`}>
+                                <span className="material-symbols-outlined text-[32px] sm:text-[36px]">{winner.icon}</span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-2">
+                                  <h3 className={`text-lg sm:text-xl font-extrabold ${winner.theme === 'amber' ? 'text-amber-500' : winner.theme === 'slate' ? 'text-slate-500' : 'text-orange-500'}`}>
+                                    {winner.label}
+                                  </h3>
+                                  <span className="text-xs sm:text-sm font-bold px-2.5 py-1 rounded-full bg-primary/10 text-primary">
+                                    +{winner.pts} pts
+                                  </span>
+                                </div>
+                                <h2 className="text-xl sm:text-2xl font-bold text-on-surface mt-1 truncate">{winner.school.name}</h2>
+                                {winner.school.zone && <p className="text-on-surface-variant text-sm mt-0.5">{winner.school.zone}</p>}
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </div>
-                    ))}
+                    )}
+
+                    {/* A Grade Section */}
+                    {aGrades.length > 0 && (
+                      <div className="flex flex-col gap-4 pt-4 border-t border-surface-container-high/60">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-sm font-bold uppercase tracking-wider text-on-surface-variant">
+                            A Grade Recipients (80% and above)
+                          </h4>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant">
+                            +{isGroup ? 3 : 1} pts each
+                          </span>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {aGrades.map((grade) => (
+                            <div key={grade.id} className="flex items-center gap-4 p-4 rounded-xl bg-surface-container-lowest border border-surface-container-high">
+                              <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-black text-lg shrink-0">
+                                A
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-on-surface truncate">{grade.school.name}</h3>
+                                {grade.school.zone && <p className="text-xs text-on-surface-variant truncate">{grade.school.zone}</p>}
+                              </div>
+                              <span className="text-xs font-bold px-2 py-1 rounded-full bg-surface-container text-on-surface shrink-0">
+                                +{grade.pts} pts
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center py-16 text-on-surface-variant">

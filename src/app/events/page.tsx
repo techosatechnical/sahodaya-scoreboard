@@ -58,7 +58,8 @@ export default function EventsPage() {
   const filteredEvents = eventsData.filter(event => 
     event.item.toLowerCase().includes(searchQuery.toLowerCase()) ||
     event.venue.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    event.stageName.toLowerCase().includes(searchQuery.toLowerCase())
+    event.stageName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    String(event.cat).toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const groupedEvents = filteredEvents.reduce((acc, event) => {
@@ -90,18 +91,19 @@ export default function EventsPage() {
           >
             {Object.entries(groupedEvents).map(([day, dayEvents]) => (
               <div key={day} className="mb-8 last:mb-0">
-                <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm py-3 mb-2">
-                  <h2 className="font-headline-sm text-headline-sm text-secondary font-bold tracking-tight">
-                    {day}
-                  </h2>
-                </div>
+                {day && day !== "Events" && (
+                  <div className="sticky top-0 z-20 bg-background/95 backdrop-blur-sm py-3 mb-2">
+                    <h2 className="font-headline-sm text-headline-sm text-secondary font-bold tracking-tight">
+                      {day}
+                    </h2>
+                  </div>
+                )}
                 <div className="w-full flex flex-col rounded-2xl bg-surface-container-lowest shadow-sm border border-surface-container-high/60 overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[500px]">
                       <thead className="bg-surface-container-low text-on-surface-variant font-label-sm text-xs sm:text-sm uppercase tracking-wider h-10 sm:h-12 border-b border-surface-container">
                         <tr>
                           <th className="py-2 sm:py-3 px-2 sm:px-4 w-12 sm:w-16 text-center">No.</th>
-                          <th className="py-2 sm:py-3 px-2 sm:px-4 w-12 sm:w-16 text-center">Cat</th>
                           <th className="py-2 sm:py-3 px-2 sm:px-4">Item</th>
                           <th className="py-2 sm:py-3 px-2 sm:px-4">Stage</th>
                           <th className="py-2 sm:py-3 px-2 sm:px-4">Venue</th>
@@ -111,19 +113,29 @@ export default function EventsPage() {
                         {dayEvents.map((event) => (
                           <tr key={event.id} className="hover:bg-surface-container-low/30 transition-colors">
                             <td className="py-2 sm:py-3 px-2 sm:px-4 text-center text-on-surface-variant font-bold">{event.id}</td>
-                            <td className="py-2 sm:py-3 px-2 sm:px-4 text-center">
-                              <span className="w-5 h-5 sm:w-6 sm:h-6 inline-flex items-center justify-center rounded-full bg-surface-container text-on-surface text-[10px] sm:text-xs font-bold">
-                                {event.cat}
-                              </span>
-                            </td>
-                            <td className="py-2 sm:py-3 px-2 sm:px-4 font-bold">{event.item}</td>
-                            <td className="py-2 sm:py-3 px-2 sm:px-4">
-                              <div className="flex flex-col">
-                                <span className="text-xs sm:text-sm font-bold text-primary">{event.stageName}</span>
-                                <span className="text-[10px] sm:text-xs text-on-surface-variant">Stage {event.stageNo}</span>
+                            <td className="py-2 sm:py-3 px-2 sm:px-4 font-bold">
+                              <div className="flex items-center flex-wrap gap-2">
+                                <span>{event.item}</span>
+                                {event.eventType === "group" ? (
+                                  <span className="text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                                    Group
+                                  </span>
+                                ) : (
+                                  <span className="text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">
+                                    Single
+                                  </span>
+                                )}
                               </div>
                             </td>
-                            <td className="py-2 sm:py-3 px-2 sm:px-4 text-on-surface-variant">{event.venue}</td>
+                            <td className="py-2 sm:py-3 px-2 sm:px-4">
+                              <div className="flex flex-col">
+                                <span className="text-xs sm:text-sm font-bold text-primary">{event.stageName || "TBA"}</span>
+                                {event.stageNo && event.stageNo !== "-" && (
+                                  <span className="text-[10px] sm:text-xs text-on-surface-variant">Stage {event.stageNo}</span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="py-2 sm:py-3 px-2 sm:px-4 text-on-surface-variant">{event.venue || "TBA"}</td>
                           </tr>
                         ))}
                       </tbody>

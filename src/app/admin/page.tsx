@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import { useState, useEffect } from "react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, getDocs, deleteDoc, doc, setDoc, getDoc } from "firebase/firestore";
+import eventsData from "@/data/events.json";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"points" | "schools" | "events" | "categories">("points");
@@ -30,6 +31,7 @@ export default function AdminDashboard() {
   // Event Form
   const [eventName, setEventName] = useState("");
   const [eventCategory, setEventCategory] = useState("");
+  const [eventType, setEventType] = useState<"single" | "group">("single");
   
   // Delete Event
   const [deleteEventId, setDeleteEventId] = useState("");
@@ -55,7 +57,32 @@ export default function AdminDashboard() {
 
   const showStatus = (msg: string) => {
     setStatus(msg);
-    setTimeout(() => setStatus(""), 3000);
+    setTimeout(() => setStatus(""), 3500);
+  };
+
+  const handleSyncDefaultEvents = async () => {
+    try {
+      showStatus("Syncing events from schedule...");
+      const existingSnap = await getDocs(collection(db, "events"));
+      const existingNames = new Set(existingSnap.docs.map(d => (d.data().item || "").toLowerCase().trim()));
+      
+      let addedCount = 0;
+      for (const ev of eventsData) {
+        if (!existingNames.has(ev.item.toLowerCase().trim())) {
+          await addDoc(collection(db, "events"), {
+            item: ev.item,
+            cat: String(ev.cat),
+            eventType: ev.eventType || (/action\s*song|western\s*dance/i.test(ev.item) ? "group" : "single")
+          });
+          addedCount++;
+        }
+      }
+      showStatus(addedCount > 0 ? `Successfully synced ${addedCount} events!` : "All schedule events are already synced.");
+      fetchData();
+    } catch (err) {
+      console.error("Sync error:", err);
+      showStatus("Error syncing events.");
+    }
   };
 
   const handleAddSchool = async (e: React.FormEvent) => {
@@ -85,9 +112,14 @@ export default function AdminDashboard() {
   const handleAddEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await addDoc(collection(db, "events"), { item: eventName, cat: eventCategory });
+      await addDoc(collection(db, "events"), { 
+        item: eventName, 
+        cat: eventCategory,
+        eventType: eventType || (/action\s*song|western\s*dance/i.test(eventName) ? "group" : "single")
+      });
       setEventName("");
       setEventCategory("");
+      setEventType("single");
       showStatus("Event added successfully!");
       fetchData();
     } catch (err) {
@@ -113,16 +145,30 @@ export default function AdminDashboard() {
     if (!selectedSchool || !selectedEvent || !points) return;
     
     try {
+      const currentEv = events.find(ev => ev.id === selectedEvent);
+      const isGroup = currentEv ? (
+        currentEv.eventType === "group" || /action\s*song|western\s*dance/i.test(currentEv.item || "")
+      ) : false;
+
       let positionLabel = "";
-      if (points === "5") positionLabel = "1st Place";
-      else if (points === "3") positionLabel = "2nd Place";
-      else if (points === "1") positionLabel = "3rd Place";
+      if (isGroup) {
+        if (points === "10") positionLabel = "1st Place";
+        else if (points === "7") positionLabel = "2nd Place";
+        else if (points === "5") positionLabel = "3rd Place";
+        else if (points === "3") positionLabel = "A Grade";
+      } else {
+        if (points === "5") positionLabel = "1st Place";
+        else if (points === "3") positionLabel = "2nd Place";
+        else if (points === "2") positionLabel = "3rd Place";
+        else if (points === "1") positionLabel = "A Grade";
+      }
 
       await addDoc(collection(db, "points"), {
         schoolId: selectedSchool,
         eventId: selectedEvent,
         points: parseInt(points),
         position: positionLabel,
+        eventType: isGroup ? "group" : "single",
         timestamp: new Date()
       });
       setSelectedSchool("");
@@ -238,7 +284,7 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <Header />
+      <Header hideNav={true} />
       <main className="flex-1 overflow-auto pt-32 md:pt-40 pb-24 md:pb-12 px-4 md:px-8 flex justify-center items-start">
         <div className="w-full max-w-4xl bg-surface-container-lowest rounded-2xl shadow-sm border border-surface-container-high/60 p-4 md:p-8">
           <h1 className="text-2xl md:text-3xl font-headline-md text-primary mb-6">Admin Control Panel</h1>
@@ -265,70 +311,107 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {activeTab === "points" && (
-            <form onSubmit={handleUpdatePoints} className="flex flex-col gap-6 max-w-md mx-auto">
-              <h2 className="text-title-lg font-bold">Award / Update Points</h2>
-              <div className="flex flex-col gap-2">
-                <label className="font-label-md font-bold">Category</label>
-                <select 
-                  className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface" 
-                  value={selectedCategoryForPoints} 
-                  onChange={(e) => {
-                    setSelectedCategoryForPoints(e.target.value);
-                    setSelectedEvent(""); // Reset event when category changes
-                  }} 
-                  required
-                >
-                  <option value="">-- Choose Category --</option>
-                  {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-                </select>
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="font-label-md font-bold">Event</label>
-                <select 
-                  className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface disabled:opacity-50" 
-                  value={selectedEvent} 
-                  onChange={(e) => setSelectedEvent(e.target.value)} 
-                  required
-                  disabled={!selectedCategoryForPoints}
-                >
-                  <option value="">-- Choose Event --</option>
-                  {events
-                    .filter(ev => {
-                      const evCat = String(ev.cat).trim();
-                      const selCat = String(selectedCategoryForPoints).trim();
-                      return evCat === selCat || 
-                             `Category ${evCat}` === selCat || 
-                             evCat === selCat.replace(/Category\s+/i, '').trim();
-                    })
-                    .map(ev => <option key={ev.id} value={ev.id}>{ev.item}</option>)
-                  }
-                </select>
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="font-label-md font-bold">School</label>
-                <select className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface" value={selectedSchool} onChange={(e) => setSelectedSchool(e.target.value)} required>
-                  <option value="">-- Choose School --</option>
-                  {schools.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-                </select>
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="font-label-md font-bold">Position</label>
-                <select 
-                  className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface" 
-                  value={points} 
-                  onChange={(e) => setPoints(e.target.value)} 
-                  required
-                >
-                  <option value="">-- Choose Position --</option>
-                  <option value="5">1st Place (5 points)</option>
-                  <option value="3">2nd Place (3 points)</option>
-                  <option value="1">3rd Place (1 point)</option>
-                </select>
-              </div>
-              <button type="submit" className="h-12 bg-primary text-on-primary rounded-lg font-bold">Award Position</button>
-            </form>
-          )}
+          {activeTab === "points" && (() => {
+            const currentEvent = events.find(ev => ev.id === selectedEvent);
+            const isGroup = currentEvent ? (
+              currentEvent.eventType === "group" || /action\s*song|western\s*dance/i.test(currentEvent.item || "")
+            ) : false;
+
+            return (
+              <form onSubmit={handleUpdatePoints} className="flex flex-col gap-6 max-w-md mx-auto">
+                <h2 className="text-title-lg font-bold">Award / Update Points</h2>
+                <div className="flex flex-col gap-2">
+                  <label className="font-label-md font-bold">Category</label>
+                  <select 
+                    className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface" 
+                    value={selectedCategoryForPoints} 
+                    onChange={(e) => {
+                      setSelectedCategoryForPoints(e.target.value);
+                      setSelectedEvent(""); // Reset event when category changes
+                      setPoints("");
+                    }} 
+                    required
+                  >
+                    <option value="">-- Choose Category --</option>
+                    {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
+                  </select>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="font-label-md font-bold">Event</label>
+                  <select 
+                    className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface disabled:opacity-50" 
+                    value={selectedEvent} 
+                    onChange={(e) => {
+                      setSelectedEvent(e.target.value);
+                      setPoints("");
+                    }} 
+                    required
+                    disabled={!selectedCategoryForPoints}
+                  >
+                    <option value="">-- Choose Event --</option>
+                    {events
+                      .filter(ev => {
+                        const evCat = String(ev.cat).trim();
+                        const selCat = String(selectedCategoryForPoints).trim();
+                        return evCat === selCat || 
+                               `Category ${evCat}` === selCat || 
+                               evCat === selCat.replace(/Category\s+/i, '').trim();
+                      })
+                      .map(ev => {
+                        const isGrp = ev.eventType === "group" || /action\s*song|western\s*dance/i.test(ev.item || "");
+                        return (
+                          <option key={ev.id} value={ev.id}>
+                            {ev.item} {isGrp ? "[Group Event]" : "[Single Event]"}
+                          </option>
+                        );
+                      })
+                    }
+                  </select>
+                  {selectedEvent && (
+                    <div className="text-xs font-semibold px-3 py-2 rounded-lg bg-surface-container text-on-surface-variant flex items-center justify-between">
+                      <span>Event Type: <strong className="text-primary">{isGroup ? "Group Event" : "Single Event"}</strong></span>
+                      <span className="font-mono text-primary font-bold">{isGroup ? "10 / 7 / 5 / 3 pts" : "5 / 3 / 2 / 1 pts"}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="font-label-md font-bold">School</label>
+                  <select className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface" value={selectedSchool} onChange={(e) => setSelectedSchool(e.target.value)} required>
+                    <option value="">-- Choose School --</option>
+                    {schools.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  </select>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="font-label-md font-bold">Position / Grade</label>
+                  <select 
+                    className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface disabled:opacity-50" 
+                    value={points} 
+                    onChange={(e) => setPoints(e.target.value)} 
+                    required
+                    disabled={!selectedEvent}
+                  >
+                    <option value="">-- Choose Position / Grade --</option>
+                    {isGroup ? (
+                      <>
+                        <option value="10">1st Prize (10 points)</option>
+                        <option value="7">2nd Prize (7 points)</option>
+                        <option value="5">3rd Prize (5 points)</option>
+                        <option value="3">A Grade (3 points)</option>
+                      </>
+                    ) : (
+                      <>
+                        <option value="5">1st Prize (5 points)</option>
+                        <option value="3">2nd Prize (3 points)</option>
+                        <option value="2">3rd Prize (2 points)</option>
+                        <option value="1">A Grade (1 point)</option>
+                      </>
+                    )}
+                  </select>
+                </div>
+                <button type="submit" className="h-12 bg-primary text-on-primary rounded-lg font-bold hover:opacity-90 transition-opacity">Award Position / Grade</button>
+              </form>
+            );
+          })()}
 
           {activeTab === "schools" && (
             <div className="grid md:grid-cols-2 gap-8 md:gap-12">
@@ -395,8 +478,33 @@ export default function AdminDashboard() {
                       {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                     </select>
                   </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="font-label-md font-bold">Event Type</label>
+                    <select 
+                      className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface" 
+                      value={eventType} 
+                      onChange={(e) => setEventType(e.target.value as any)}
+                    >
+                      <option value="single">Single Event (1st: 5, 2nd: 3, 3rd: 2, A: 1)</option>
+                      <option value="group">Group Event (1st: 10, 2nd: 7, 3rd: 5, A: 3)</option>
+                    </select>
+                  </div>
                   <button type="submit" className="h-12 bg-primary text-on-primary rounded-lg font-bold">Add Event</button>
                 </form>
+
+                <div className="border-t pt-8 flex flex-col gap-4">
+                  <h2 className="text-title-lg font-bold">Quick Sync Events</h2>
+                  <p className="text-sm text-on-surface-variant">
+                    Sync the official 7 schedule events directly into your database.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleSyncDefaultEvents}
+                    className="h-12 px-6 rounded-lg bg-secondary text-on-secondary font-bold hover:opacity-90 transition-opacity"
+                  >
+                    Sync Schedule Events to Database
+                  </button>
+                </div>
 
                 <div className="border-t pt-8 flex flex-col gap-6">
                   <h2 className="text-title-lg font-bold">Bulk Add Events</h2>

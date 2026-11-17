@@ -9,7 +9,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Sahodaya Inter-School Competition 2026",
+  title: "Rangolsav 2026",
   description: "Official Tournament Results Portal",
 };
 
