@@ -10,11 +10,11 @@ import eventsData from "@/data/events.json";
 // ADMIN CONFIGURATION
 // You can change this password to whatever you want
 // ==========================================
-const ADMIN_PASSWORD = "admin@rangolsav2026";
+const ADMIN_PASSWORD = "rangolsav2026";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<"points" | "schools" | "events" | "categories">("points");
-  
+
   // Password Protection States
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [passwordInput, setPasswordInput] = useState<string>("");
@@ -27,7 +27,7 @@ export default function AdminDashboard() {
 
   // States for forms
   const [status, setStatus] = useState("");
-  
+
   // Points Form
   const [selectedSchool, setSelectedSchool] = useState("");
   const [selectedCategoryForPoints, setSelectedCategoryForPoints] = useState("");
@@ -44,7 +44,7 @@ export default function AdminDashboard() {
   const [eventName, setEventName] = useState("");
   const [eventCategory, setEventCategory] = useState("");
   const [eventType, setEventType] = useState<"single" | "group">("single");
-  
+
   // Delete Event
   const [deleteEventId, setDeleteEventId] = useState("");
 
@@ -84,10 +84,10 @@ export default function AdminDashboard() {
     try {
       const sSnap = await getDocs(collection(db, "schools"));
       setSchools(sSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-      
+
       const cSnap = await getDocs(collection(db, "categories"));
       setCategories(cSnap.docs.map(d => ({ id: d.id, ...d.data() })));
-      
+
       const eSnap = await getDocs(collection(db, "events"));
       setEvents(eSnap.docs.map(d => ({ id: d.id, ...d.data() })));
     } catch (error) {
@@ -111,7 +111,7 @@ export default function AdminDashboard() {
       showStatus("Syncing events from schedule...");
       const existingSnap = await getDocs(collection(db, "events"));
       const existingNames = new Set(existingSnap.docs.map(d => (d.data().item || "").toLowerCase().trim()));
-      
+
       let addedCount = 0;
       for (const ev of eventsData) {
         if (!existingNames.has(ev.item.toLowerCase().trim())) {
@@ -158,8 +158,8 @@ export default function AdminDashboard() {
   const handleAddEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await addDoc(collection(db, "events"), { 
-        item: eventName, 
+      await addDoc(collection(db, "events"), {
+        item: eventName,
         cat: eventCategory,
         eventType: eventType || (/action\s*song|western\s*dance/i.test(eventName) ? "group" : "single")
       });
@@ -189,7 +189,7 @@ export default function AdminDashboard() {
   const handleUpdatePoints = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedSchool || !selectedEvent || !points) return;
-    
+
     try {
       const currentEv = events.find(ev => ev.id === selectedEvent);
       const isGroup = currentEv ? (
@@ -235,9 +235,9 @@ export default function AdminDashboard() {
     reader.onload = async (event) => {
       const text = event.target?.result as string;
       if (!text) return;
-      
+
       let lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
-      
+
       // Skip the first row if it looks like a header (e.g., "School Name", "Schools")
       if (lines.length > 0 && lines[0].toLowerCase().includes('school')) {
         lines.shift();
@@ -247,24 +247,24 @@ export default function AdminDashboard() {
         showStatus("File is empty or invalid.");
         return;
       }
-      
+
       showStatus(`Uploading ${lines.length} schools...`);
-      
+
       try {
         const promises = lines.map(name => addDoc(collection(db, "schools"), { name }));
         await Promise.all(promises);
-        
+
         showStatus(`Successfully added ${lines.length} schools!`);
         fetchData();
       } catch (err) {
         console.error("Bulk add error:", err);
         showStatus("Error uploading some schools.");
       }
-      
+
       // Reset input
       e.target.value = '';
     };
-    
+
     reader.readAsText(file);
   };
 
@@ -276,10 +276,10 @@ export default function AdminDashboard() {
     reader.onload = async (event) => {
       const text = event.target?.result as string;
       if (!text) return;
-      
+
       try {
-        let eventsToAdd: {item: string, cat: string}[] = [];
-        
+        let eventsToAdd: { item: string, cat: string }[] = [];
+
         if (file.name.endsWith('.json')) {
           const parsed = JSON.parse(text);
           if (Array.isArray(parsed)) {
@@ -291,7 +291,7 @@ export default function AdminDashboard() {
         } else {
           // CSV processing
           let lines = text.split(/\r?\n/).map(line => line.trim()).filter(line => line.length > 0);
-          
+
           // Skip the first row if it looks like a header (e.g., "Event Name, Category")
           if (lines.length > 0 && lines[0].toLowerCase().includes('event')) {
             lines.shift();
@@ -303,28 +303,28 @@ export default function AdminDashboard() {
               return { item: parts[0].trim(), cat: parts[1].trim() };
             }
             return null;
-          }).filter(Boolean) as {item: string, cat: string}[];
+          }).filter(Boolean) as { item: string, cat: string }[];
         }
 
         if (eventsToAdd.length === 0) {
           showStatus("File is empty or invalid format.");
           return;
         }
-        
+
         showStatus(`Uploading ${eventsToAdd.length} events...`);
         const promises = eventsToAdd.map(ev => addDoc(collection(db, "events"), ev));
         await Promise.all(promises);
-        
+
         showStatus(`Successfully added ${eventsToAdd.length} events!`);
         fetchData();
       } catch (err) {
         console.error("Bulk add error:", err);
         showStatus("Error uploading some events.");
       }
-      
+
       e.target.value = '';
     };
-    
+
     reader.readAsText(file);
   };
 
@@ -410,17 +410,16 @@ export default function AdminDashboard() {
               Lock Panel
             </button>
           </div>
-          
+
           <div className="flex flex-wrap gap-2 mb-8 border-b pb-4 overflow-x-auto scrollbar-hide">
             {["points", "schools", "categories", "events"].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab as any)}
-                className={`px-4 py-2 md:px-6 rounded-full text-sm md:text-base font-bold capitalize transition-colors whitespace-nowrap ${
-                  activeTab === tab 
-                    ? "bg-primary text-on-primary" 
-                    : "bg-surface-container hover:bg-surface-container-high text-on-surface"
-                }`}
+                className={`px-4 py-2 md:px-6 rounded-full text-sm md:text-base font-bold capitalize transition-colors whitespace-nowrap ${activeTab === tab
+                  ? "bg-primary text-on-primary"
+                  : "bg-surface-container hover:bg-surface-container-high text-on-surface"
+                  }`}
               >
                 Manage {tab}
               </button>
@@ -444,14 +443,14 @@ export default function AdminDashboard() {
                 <h2 className="text-title-lg font-bold">Award / Update Points</h2>
                 <div className="flex flex-col gap-2">
                   <label className="font-label-md font-bold">Category</label>
-                  <select 
-                    className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface" 
-                    value={selectedCategoryForPoints} 
+                  <select
+                    className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface"
+                    value={selectedCategoryForPoints}
                     onChange={(e) => {
                       setSelectedCategoryForPoints(e.target.value);
                       setSelectedEvent(""); // Reset event when category changes
                       setPoints("");
-                    }} 
+                    }}
                     required
                   >
                     <option value="">-- Choose Category --</option>
@@ -460,13 +459,13 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="font-label-md font-bold">Event</label>
-                  <select 
-                    className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface disabled:opacity-50" 
-                    value={selectedEvent} 
+                  <select
+                    className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface disabled:opacity-50"
+                    value={selectedEvent}
                     onChange={(e) => {
                       setSelectedEvent(e.target.value);
                       setPoints("");
-                    }} 
+                    }}
                     required
                     disabled={!selectedCategoryForPoints}
                   >
@@ -475,9 +474,9 @@ export default function AdminDashboard() {
                       .filter(ev => {
                         const evCat = String(ev.cat).trim();
                         const selCat = String(selectedCategoryForPoints).trim();
-                        return evCat === selCat || 
-                               `Category ${evCat}` === selCat || 
-                               evCat === selCat.replace(/Category\s+/i, '').trim();
+                        return evCat === selCat ||
+                          `Category ${evCat}` === selCat ||
+                          evCat === selCat.replace(/Category\s+/i, '').trim();
                       })
                       .map(ev => {
                         const isGrp = ev.eventType === "group" || /action\s*song|western\s*dance/i.test(ev.item || "");
@@ -505,10 +504,10 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="font-label-md font-bold">Position / Grade</label>
-                  <select 
-                    className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface disabled:opacity-50" 
-                    value={points} 
-                    onChange={(e) => setPoints(e.target.value)} 
+                  <select
+                    className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface disabled:opacity-50"
+                    value={points}
+                    onChange={(e) => setPoints(e.target.value)}
                     required
                     disabled={!selectedEvent}
                   >
@@ -546,7 +545,7 @@ export default function AdminDashboard() {
                   </div>
                   <button type="submit" className="h-12 bg-primary text-on-primary rounded-lg font-bold">Add School</button>
                 </form>
-                
+
                 <div className="border-t pt-8 flex flex-col gap-6">
                   <h2 className="text-title-lg font-bold">Bulk Add Schools</h2>
                   <div className="flex flex-col gap-2">
@@ -602,9 +601,9 @@ export default function AdminDashboard() {
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="font-label-md font-bold">Event Type</label>
-                    <select 
-                      className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface" 
-                      value={eventType} 
+                    <select
+                      className="h-12 px-4 rounded-lg bg-surface-container-low border text-on-surface"
+                      value={eventType}
                       onChange={(e) => setEventType(e.target.value as any)}
                     >
                       <option value="single">Single Event (1st: 5, 2nd: 3, 3rd: 2, A: 1)</option>
