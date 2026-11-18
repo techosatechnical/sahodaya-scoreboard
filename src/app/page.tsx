@@ -311,7 +311,7 @@ export default function Home() {
         data-purpose="top-navigation-bar"
       >
         <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-indigo-700 via-blue-600 to-indigo-900 flex items-center justify-center shadow-md shadow-indigo-200 text-white font-display font-extrabold text-2xl tracking-tighter shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-linear-to-tr from-indigo-700 via-blue-600 to-indigo-900 flex items-center justify-center shadow-md shadow-indigo-200 text-white font-display font-extrabold text-2xl tracking-tighter shrink-0">
             R
           </div>
           <div>
@@ -322,7 +322,7 @@ export default function Home() {
             </div>
             <h1 className="text-2xl lg:text-3xl font-black font-display tracking-tight text-slate-900 flex items-center gap-2 flex-wrap">
               RANGOTSAV{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-indigo-600">
                 2026
               </span>
             </h1>
