@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 export type ScoreboardCategory = {
   id: string;
@@ -16,14 +16,13 @@ export type ScoreboardEventGroup = {
 
 export type ScoreboardSchool = {
   id: string;
-  rank: number;
   name: string;
   zone: string;
-  points: number;
   entryCount: number;
   /** Keyed by `${eventGroupKey}__${categoryId}` */
   cellPoints: Record<string, number>;
-  theme: "amber" | "slate" | "orange" | "default";
+  /** Keyed by `categoryId` */
+  categoryTotals: Record<string, number>;
 };
 
 export default function ScoreboardTable({
@@ -41,66 +40,6 @@ export default function ScoreboardTable({
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isUserInteracting = useRef(false);
-  const rowRefs = useRef<Record<string, HTMLTableRowElement | null>>({});
-  const prevTopsRef = useRef<Record<string, number>>({});
-  const prevRanksRef = useRef<Record<string, number>>({});
-  const [rankUpDeltas, setRankUpDeltas] = useState<Record<string, number>>({});
-
-  useLayoutEffect(() => {
-    const nextTops: Record<string, number> = {};
-    const movedUp: Record<string, number> = {};
-
-    for (const school of schools) {
-      const el = rowRefs.current[school.id];
-      if (!el) continue;
-
-      const rect = el.getBoundingClientRect();
-      nextTops[school.id] = rect.top;
-
-      const prevTop = prevTopsRef.current[school.id];
-      const prevRank = prevRanksRef.current[school.id];
-
-      if (prevTop !== undefined) {
-        const deltaY = prevTop - rect.top;
-        if (Math.abs(deltaY) > 1) {
-          const isMovingUp = prevRank !== undefined && school.rank < prevRank;
-          if (isMovingUp) {
-            movedUp[school.id] = prevRank - school.rank;
-          }
-
-          el.style.transition = "none";
-          el.style.transform = `translateY(${deltaY}px)`;
-          el.style.position = "relative";
-          el.style.zIndex = isMovingUp ? "20" : "1";
-
-          // Force reflow before playing the transition
-          el.getBoundingClientRect();
-
-          el.style.transition = "transform 700ms cubic-bezier(0.22, 1, 0.36, 1)";
-          el.style.transform = "translateY(0)";
-
-          const clearZ = () => {
-            el.style.zIndex = "";
-            el.style.position = "";
-            el.removeEventListener("transitionend", clearZ);
-          };
-          el.addEventListener("transitionend", clearZ);
-        }
-      }
-
-      prevRanksRef.current[school.id] = school.rank;
-    }
-
-    prevTopsRef.current = nextTops;
-
-    if (Object.keys(movedUp).length > 0) {
-      setRankUpDeltas(movedUp);
-      const timer = setTimeout(() => {
-        setRankUpDeltas({});
-      }, 3500);
-      return () => clearTimeout(timer);
-    }
-  }, [schools]);
 
   useEffect(() => {
     const scrollContainer = scrollRef.current;
@@ -148,7 +87,8 @@ export default function ScoreboardTable({
     };
   }, [schools]);
 
-  const totalSubCols = eventGroups.length * Math.max(categories.length, 1);
+  const catCount = Math.max(categories.length, 1);
+  const totalCols = eventGroups.length * catCount + catCount + 1;
 
   return (
     <main
@@ -171,15 +111,17 @@ export default function ScoreboardTable({
           isUserInteracting.current = false;
         }}
       >
-        <table className="w-full h-full table-fixed border-collapse text-left min-w-[1050px]">
+        <table className="w-full h-full table-fixed border-collapse text-left min-w-275">
           <colgroup>
-            <col className="w-[20%]" />
+            <col className="w-[19%]" />
             {eventGroups.map((eg) =>
               categories.map((cat) => (
                 <col key={`${eg.key}-${cat.id}`} />
               ))
             )}
-            <col className="w-[10%]" />
+            {categories.map((cat) => (
+              <col key={`total-col-${cat.id}`} className="w-[5.5%]" />
+            ))}
           </colgroup>
 
           <thead className="sticky top-0 z-20">
@@ -209,8 +151,8 @@ export default function ScoreboardTable({
                 return (
                   <th
                     key={eg.key}
-                    colSpan={Math.max(categories.length, 1)}
-                    className={`text-center py-3.5 px-2.5 border-l border-slate-800 font-display text-xs sm:text-sm lg:text-base font-extrabold tracking-wide align-middle whitespace-normal break-words leading-snug ${
+                    colSpan={catCount}
+                    className={`text-center py-3.5 px-2.5 border-l border-slate-800 font-display text-xs sm:text-sm lg:text-base font-extrabold tracking-wide align-middle whitespace-normal wrap-break-word leading-snug ${
                       isLive
                         ? "bg-slate-900/90 text-amber-300"
                         : "bg-slate-900/95 text-white"
@@ -228,14 +170,17 @@ export default function ScoreboardTable({
                 );
               })}
 
-              <th className="text-center py-3.5 px-2 border-l border-slate-800 bg-slate-950 text-amber-400 font-display tracking-widest text-xs sm:text-sm sticky right-0 z-30 align-middle">
-                ★ TOTAL SCORE
+              <th
+                colSpan={catCount}
+                className="text-center py-3.5 px-2 border-l border-slate-700 bg-slate-950 text-amber-400 font-display tracking-widest text-xs sm:text-sm align-middle"
+              >
+                CATEGORY TOTALS
               </th>
             </tr>
 
             <tr className="bg-slate-100 text-xs sm:text-sm font-extrabold text-slate-900 uppercase tracking-wider border-b-2 border-slate-300">
               <th className="px-3.5 py-3 text-slate-900 font-extrabold sticky left-0 z-30 bg-slate-100 align-middle">
-                Rank • Zone &amp; Entries
+                School • Zone &amp; Entries
               </th>
 
               {eventGroups.map((eg) =>
@@ -260,9 +205,17 @@ export default function ScoreboardTable({
                 })
               )}
 
-              <th className="text-center py-3 px-2 border-l border-slate-300 bg-amber-100 text-slate-950 font-extrabold sticky right-0 z-30 align-middle">
-                PTS
-              </th>
+              {categories.map((cat, catIdx) => (
+                <th
+                  key={`total-hdr-${cat.id}`}
+                  className={`text-center py-3 px-1.5 border-l ${
+                    catIdx === 0 ? "border-slate-300" : "border-amber-200/70"
+                  } bg-amber-100 text-slate-950 font-extrabold align-middle`}
+                  title={`${cat.name} Total`}
+                >
+                  {cat.shortLabel}
+                </th>
+              ))}
             </tr>
           </thead>
 
@@ -270,7 +223,7 @@ export default function ScoreboardTable({
             {schools.length === 0 ? (
               <tr>
                 <td
-                  colSpan={totalSubCols + 2}
+                  colSpan={totalCols}
                   className="py-16 text-center text-slate-400 font-semibold text-sm"
                 >
                   No participating schools found.
@@ -278,95 +231,30 @@ export default function ScoreboardTable({
               </tr>
             ) : (
               schools.map((school, rowIndex) => {
-                const isLeader = school.rank === 1 && school.points > 0;
-                const isSilver = school.rank === 2 && school.points > 0;
-                const isBronze = school.rank === 3 && school.points > 0;
-
-                const rowBg = isLeader
-                  ? "gold-shimmer hover:bg-amber-100/60"
-                  : rowIndex % 2 === 1
-                    ? "bg-slate-50/60 hover:bg-slate-100/70"
-                    : "bg-white hover:bg-slate-50";
-
-                const stickyCellBg = isLeader
-                  ? "bg-amber-50/95"
-                  : rowIndex % 2 === 1
-                    ? "bg-slate-50"
-                    : "bg-white";
-
-                const borderColor = isLeader ? "border-amber-200/60" : "border-slate-200";
-                const cellBorderColor = isLeader ? "border-amber-200/40" : "border-slate-100";
-
-                const rankDelta = rankUpDeltas[school.id];
+                const isAlt = rowIndex % 2 === 1;
+                const rowBg = isAlt
+                  ? "bg-slate-50/60 hover:bg-slate-100/70"
+                  : "bg-white hover:bg-slate-50";
+                const stickyCellBg = isAlt ? "bg-slate-50" : "bg-white";
 
                 return (
                   <tr
                     key={school.id}
-                    ref={(el) => {
-                      rowRefs.current[school.id] = el;
-                    }}
-                    className={`${rowBg} transition-colors duration-300 ${
-                      rankDelta ? "ring-2 ring-inset ring-emerald-400/70" : ""
-                    }`}
+                    className={`${rowBg} transition-colors duration-150`}
                   >
                     <td
-                      className={`px-3 py-2 border-r ${borderColor} sticky left-0 z-10 ${stickyCellBg}`}
+                      className={`px-3.5 py-2.5 border-r border-slate-200 sticky left-0 z-10 ${stickyCellBg}`}
                     >
-                      <div className="flex items-center space-x-2">
+                      <div className="min-w-0">
                         <div
-                          className={`w-6 h-6 rounded font-display font-black text-xs flex items-center justify-center shrink-0 ${
-                            isLeader
-                              ? "bg-amber-500 text-white shadow-sm ring-1 ring-amber-300"
-                              : isSilver
-                                ? "bg-slate-300 text-slate-800 ring-1 ring-slate-400"
-                                : isBronze
-                                  ? "bg-orange-700 text-orange-50 ring-1 ring-orange-800"
-                                  : "bg-slate-100 text-slate-700 border border-slate-300 font-bold"
-                          }`}
+                          className="text-xs lg:text-sm font-bold text-slate-900 tracking-tight truncate"
+                          title={school.name}
                         >
-                          {school.rank}
+                          {school.name}
                         </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-1.5">
-                            <span
-                              className={`text-xs lg:text-sm tracking-tight truncate ${
-                                isLeader
-                                  ? "font-extrabold text-slate-900"
-                                  : "font-bold text-slate-800"
-                              }`}
-                              title={school.name}
-                            >
-                              {school.name}
-                            </span>
-                            {rankDelta && (
-                              <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-500 text-white shrink-0 animate-pulse">
-                                ▲ {rankDelta}
-                              </span>
-                            )}
-                            {isLeader && (
-                              <span className="px-1 py-0.5 rounded text-[9px] font-black uppercase bg-amber-400 text-amber-950 shrink-0">
-                                LEAD
-                              </span>
-                            )}
-                            {isSilver && (
-                              <span className="px-1 py-0.5 rounded text-[9px] font-bold uppercase bg-slate-100 text-slate-600 border border-slate-300 shrink-0">
-                                SLVR
-                              </span>
-                            )}
-                            {isBronze && (
-                              <span className="px-1 py-0.5 rounded text-[9px] font-bold uppercase bg-orange-100 text-orange-800 border border-orange-200 shrink-0">
-                                BRNZ
-                              </span>
-                            )}
-                          </div>
-                          <div
-                            className={`text-[10px] font-semibold truncate ${
-                              isLeader ? "text-amber-800" : "text-slate-500"
-                            }`}
-                          >
-                            {school.zone} • {school.entryCount}{" "}
-                            {school.entryCount === 1 ? "Entry" : "Entries"}
-                          </div>
+                        <div className="text-[10px] font-semibold text-slate-500 truncate">
+                          {school.zone} • {school.entryCount}{" "}
+                          {school.entryCount === 1 ? "Entry" : "Entries"}
                         </div>
                       </div>
                     </td>
@@ -382,13 +270,13 @@ export default function ScoreboardTable({
                         return (
                           <td
                             key={cellKey}
-                            className={`text-center py-2 px-1 font-mono-numbers text-xs lg:text-sm font-bold border-r ${
-                              isLastCat ? borderColor : cellBorderColor
+                            className={`text-center py-2.5 px-1 font-mono-numbers text-base sm:text-lg lg:text-xl font-extrabold border-r ${
+                              isLastCat ? "border-slate-200" : "border-slate-100"
                             } ${
                               isLiveCell
                                 ? "text-emerald-700 bg-emerald-50/40"
                                 : pts > 0
-                                  ? "text-slate-800"
+                                  ? "text-slate-900"
                                   : "text-slate-300"
                             }`}
                           >
@@ -409,25 +297,28 @@ export default function ScoreboardTable({
                       })
                     )}
 
-                    <td
-                      className={`text-center py-1.5 px-2 sticky right-0 z-10 border-l ${borderColor} ${
-                        isLeader
-                          ? "bg-amber-100/95"
-                          : rowIndex % 2 === 1
-                            ? "bg-slate-100"
-                            : "bg-slate-50/95"
-                      }`}
-                    >
-                      <div
-                        className={`py-1 px-2 rounded-lg font-mono-numbers font-black text-base lg:text-xl shadow-sm tracking-tight ${
-                          isLeader
-                            ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white"
-                            : "bg-slate-800 text-cyan-300"
-                        }`}
-                      >
-                        {school.points.toLocaleString()}
-                      </div>
-                    </td>
+                    {categories.map((cat, catIdx) => {
+                      const catTotal = school.categoryTotals[cat.id] || 0;
+                      const hasPoints = catTotal > 0;
+                      return (
+                        <td
+                          key={`total-cell-${school.id}-${cat.id}`}
+                          className={`text-center py-1.5 px-1.5 border-l ${
+                            catIdx === 0 ? "border-slate-300" : "border-slate-200"
+                          } ${isAlt ? "bg-slate-100/80" : "bg-slate-50/80"}`}
+                        >
+                          <div
+                            className={`py-1 px-1.5 rounded-lg font-mono-numbers text-sm sm:text-base lg:text-lg tracking-tight ${
+                              hasPoints
+                                ? "bg-linear-to-br from-indigo-600 to-blue-700 text-white font-black shadow-sm ring-1 ring-indigo-500/30"
+                                : "bg-slate-100 text-slate-400 font-bold border border-slate-200"
+                            }`}
+                          >
+                            {catTotal}
+                          </div>
+                        </td>
+                      );
+                    })}
                   </tr>
                 );
               })

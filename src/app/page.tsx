@@ -165,18 +165,18 @@ export default function Home() {
           id: string;
           name: string;
           zone: string;
-          points: number;
           entryCount: number;
           cellPoints: Record<string, number>;
+          categoryTotals: Record<string, number>;
         }
       > = {};
 
       Object.values(rawSchools).forEach((s) => {
         currentMap[s.id] = {
           ...s,
-          points: 0,
           entryCount: 0,
           cellPoints: {},
+          categoryTotals: {},
         };
       });
 
@@ -202,34 +202,20 @@ export default function Home() {
         }
 
         if (data.schoolId && currentMap[data.schoolId]) {
-          currentMap[data.schoolId].points += pts;
           currentMap[data.schoolId].entryCount += 1;
           if (mapping) {
             const cellKey = `${mapping.groupKey}__${mapping.categoryId}`;
             currentMap[data.schoolId].cellPoints[cellKey] =
               (currentMap[data.schoolId].cellPoints[cellKey] || 0) + pts;
+            currentMap[data.schoolId].categoryTotals[mapping.categoryId] =
+              (currentMap[data.schoolId].categoryTotals[mapping.categoryId] || 0) +
+              pts;
           }
         }
       }
 
-      const sortedSchools = Object.values(currentMap).sort(
-        (a, b) => b.points - a.points
-      );
-
-      const processedSchools: ScoreboardSchool[] = sortedSchools.map(
-        (school, index) => {
-          const rank = index + 1;
-          let theme: ScoreboardSchool["theme"] = "default";
-          if (rank === 1 && school.points > 0) theme = "amber";
-          else if (rank === 2 && school.points > 0) theme = "slate";
-          else if (rank === 3 && school.points > 0) theme = "orange";
-
-          return {
-            ...school,
-            rank,
-            theme,
-          };
-        }
+      const processedSchools: ScoreboardSchool[] = Object.values(currentMap).sort(
+        (a, b) => a.name.localeCompare(b.name)
       );
 
       setCategories(catList);
@@ -312,7 +298,7 @@ export default function Home() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen w-screen bg-slate-100 text-slate-700 font-display font-bold text-xl">
-        Loading Rangolsav 2026 Scoreboard...
+        Loading RANGOTSAV 2026 Scoreboard...
       </div>
     );
   }
@@ -335,7 +321,7 @@ export default function Home() {
               </span>
             </div>
             <h1 className="text-2xl lg:text-3xl font-black font-display tracking-tight text-slate-900 flex items-center gap-2 flex-wrap">
-              RANGOLSAV{" "}
+              RANGOTSAV{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
                 2026
               </span>
@@ -365,7 +351,7 @@ export default function Home() {
                 {clockTime}
               </div>
               <div className="text-[10px] uppercase font-bold text-indigo-300 tracking-widest mt-0.5">
-                {clockDate || "RANGOLSAV 2026"}
+                {clockDate || "RANGOTSAV 2026"}
               </div>
             </div>
           </div>

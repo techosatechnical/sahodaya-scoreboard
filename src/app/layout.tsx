@@ -23,7 +23,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rangolsav 2026",
+  title: "RANGOTSAV 2026",
   description: "Official Tournament Results Portal",
 };
 

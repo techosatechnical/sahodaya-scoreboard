@@ -27,8 +27,8 @@ export default function Header({
         <div className="h-24 md:h-28 w-full px-4 md:px-8 flex items-center justify-between gap-space-md relative">
           <div className="flex items-center justify-between w-full md:w-auto gap-4 z-10 shrink-0">
             <Link className="flex items-center group" href="/">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight uppercase bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent drop-shadow-md leading-tight">
-                Rangolsav 2026
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight uppercase bg-linear-to-r from-primary via-secondary to-primary bg-clip-text text-transparent drop-shadow-md leading-tight">
+                RANGOTSAV 2026
               </h1>
             </Link>
           </div>
@@ -39,7 +39,7 @@ export default function Header({
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="bg-surface-container-high hover:bg-surface-container-highest focus:bg-surface-container-highest transition-colors rounded-lg px-3 py-1.5 pr-8 outline-none text-on-surface font-semibold text-sm border border-transparent focus:border-primary shadow-sm appearance-none cursor-pointer"
+                  className="hover:bg-surface-container-highest focus:bg-surface-container-highest transition-colors rounded-lg px-3 py-1.5 pr-8 outline-none text-on-surface font-semibold text-sm border focus:border-primary shadow-sm appearance-none cursor-pointer"
                 >
                   <option value="all">All Categories</option>
                   {categories.map((c) => (
@@ -102,7 +102,7 @@ export default function Header({
 
       {/* Mobile Bottom Navigation */}
       {!isAdmin && (
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 flex items-center justify-around gap-1 p-2 bg-surface-container-highest border-t border-surface-container-high shadow-[0_-4px_16px_rgba(0,0,0,0.1)] z-[100] pb-safe">
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 flex items-center justify-around gap-1 p-2 bg-surface-container-highest border-t border-surface-container-high shadow-[0_-4px_16px_rgba(0,0,0,0.1)] z-100 pb-safe">
           <Link
             aria-current={pathname === "/" ? "page" : undefined}
             className={`flex flex-col items-center justify-center flex-1 px-2 py-2 transition-colors rounded-xl ${pathname === "/" ? "text-primary font-bold" : "text-on-surface-variant hover:text-on-surface"}`}
