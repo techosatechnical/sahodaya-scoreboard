@@ -138,3 +138,31 @@
 ::-webkit-scrollbar {
   display: none;
 }
+
+.font-display {
+  font-family: var(--font-outfit), "Outfit", sans-serif;
+}
+
+.font-mono-numbers {
+  font-family: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
+  font-feature-settings: "tnum" 1, "zero" 1;
+}
+
+@keyframes subtle-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.92);
+  }
+}
+
+.animate-live-dot {
+  animation: subtle-pulse 1.8s ease-in-out infinite;
+}
+
+.gold-shimmer {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 50%, #FDE68A 100%);
+}
