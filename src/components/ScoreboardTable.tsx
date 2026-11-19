@@ -180,7 +180,7 @@ export default function ScoreboardTable({
 
             <tr className="bg-slate-100 text-xs sm:text-sm font-extrabold text-slate-900 uppercase tracking-wider border-b-2 border-slate-300">
               <th className="px-3.5 py-3 text-slate-900 font-extrabold sticky left-0 z-30 bg-slate-100 align-middle">
-                School • Zone &amp; Entries
+                School • Entries
               </th>
 
               {eventGroups.map((eg) =>
@@ -253,7 +253,7 @@ export default function ScoreboardTable({
                           {school.name}
                         </div>
                         <div className="text-[10px] font-semibold text-slate-500 truncate">
-                          {school.zone} • {school.entryCount}{" "}
+                          {school.entryCount}{" "}
                           {school.entryCount === 1 ? "Entry" : "Entries"}
                         </div>
                       </div>
